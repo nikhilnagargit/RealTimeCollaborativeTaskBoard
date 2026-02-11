@@ -13,7 +13,9 @@ A production-ready task management application built with **React 18** and **Typ
 - ✅ **Undo/Redo** - Full history tracking with keyboard shortcuts (Ctrl/Cmd+Z)
 - ✅ **Multi-Select Filters** - Filter by assignees and priorities
 - ✅ **Debounced Search** - Real-time search (300ms debounce)
-- ✅ **Dark Mode** - Complete dark theme support
+- ✅ **Dark Mode** - Complete dark theme support with system preference detection
+- ✅ **Offline Support** - PWA with service workers, works offline
+- ✅ **LocalStorage Persistence** - Tasks saved locally
 - ✅ **Responsive Design** - Works on all screen sizes
 - ✅ **Toast Notifications** - User feedback for all actions
 - ✅ **Keyboard Shortcuts** - Full keyboard navigation support
@@ -31,6 +33,13 @@ A production-ready task management application built with **React 18** and **Typ
 - ✅ **ARIA Labels** - Full screen reader support
 - ✅ **Keyboard Navigation** - Complete keyboard accessibility
 - ✅ **Semantic HTML** - Proper structure and landmarks
+
+### 📱 PWA (Progressive Web App)
+- ✅ **Offline First** - Service workers with smart caching strategies
+- ✅ **Installable** - Add to home screen on mobile/desktop
+- ✅ **Background Sync** - Syncs data when connection restored
+- ✅ **Cache Strategies** - Cache-first for assets, network-first for data
+- ✅ **App-like Experience** - Standalone mode with custom theme
 
 ---
 
