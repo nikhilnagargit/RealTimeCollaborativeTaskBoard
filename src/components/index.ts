@@ -10,4 +10,5 @@ export { VirtualizedTaskColumn } from './VirtualizedTaskColumn';
 export { TaskCard } from './TaskCard';
 export { TaskModal } from './TaskModal';
 export { FilterBar } from './FilterBar';
+export { MultiSelect } from './MultiSelect';
 export { ThomsonReutersLogo } from './ThomsonReutersLogo';

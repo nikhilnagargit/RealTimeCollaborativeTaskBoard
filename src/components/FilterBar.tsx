@@ -8,6 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import { FilterOptions, TaskPriority } from '../types';
 import { useDebounce } from '../hooks';
+import { MultiSelect } from './MultiSelect';
 
 interface FilterBarProps {
   assignees: string[];
@@ -45,39 +46,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
   const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([]);
-  const [showAssigneeDropdown, setShowAssigneeDropdown] = useState(false);
-  const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
-  
-  // Refs for dropdown positioning
-  const assigneeButtonRef = React.useRef<HTMLButtonElement>(null);
-  const priorityButtonRef = React.useRef<HTMLButtonElement>(null);
 
   // Debounce search query for performance
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-  /**
-   * Close dropdowns when clicking outside
-   */
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      // Check if click is outside both dropdowns
-      const assigneeDropdown = document.querySelector('.assignee-dropdown');
-      const priorityDropdown = document.querySelector('.priority-dropdown');
-      
-      if (assigneeDropdown && !assigneeDropdown.contains(target)) {
-        setShowAssigneeDropdown(false);
-      }
-      if (priorityDropdown && !priorityDropdown.contains(target)) {
-        setShowPriorityDropdown(false);
-      }
-    };
-
-    if (showAssigneeDropdown || showPriorityDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [showAssigneeDropdown, showPriorityDropdown]);
 
   /**
    * Update filters whenever any filter value changes
@@ -194,91 +165,25 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           </div>
         </div>
 
-          {/* Assignee Filter - Custom Multi-Select */}
-          <div className="relative w-full sm:w-48 assignee-dropdown">
-            <button
-              ref={assigneeButtonRef}
-              type="button"
-              onClick={() => setShowAssigneeDropdown(!showAssigneeDropdown)}
-              className="w-full px-3 py-1.5 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 flex items-center justify-between"
-              aria-label="Filter by assignees"
-            >
-              <span className="truncate">
-                {selectedAssignees.length === 0 ? 'Assignees' : `${selectedAssignees.length} selected`}
-              </span>
-              <svg className="w-4 h-4 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            {showAssigneeDropdown && (
-              <div className="absolute z-[100] mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-xl max-h-48 overflow-y-auto">
-                {assignees.map((assignee) => (
-                  <label
-                    key={assignee}
-                    className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer transition-colors duration-150"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedAssignees.includes(assignee)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedAssignees([...selectedAssignees, assignee]);
-                        } else {
-                          setSelectedAssignees(selectedAssignees.filter(a => a !== assignee));
-                        }
-                      }}
-                      className="w-4 h-4 text-blue-600 bg-white dark:bg-gray-600 border-gray-300 dark:border-gray-500 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <span className="ml-2 text-sm text-gray-900 dark:text-gray-100 select-none">{assignee}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Assignee Filter - Reusable Multi-Select */}
+          <MultiSelect
+            options={assignees}
+            selectedValues={selectedAssignees}
+            onChange={setSelectedAssignees}
+            placeholder="Assignees"
+            label="Filter by assignees"
+            className="w-full sm:w-48"
+          />
 
-          {/* Priority Filter - Custom Multi-Select */}
-          <div className="relative w-full sm:w-36 priority-dropdown">
-            <button
-              ref={priorityButtonRef}
-              type="button"
-              onClick={() => setShowPriorityDropdown(!showPriorityDropdown)}
-              className="w-full px-3 py-1.5 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 flex items-center justify-between"
-              aria-label="Filter by priorities"
-            >
-              <span className="truncate">
-                {selectedPriorities.length === 0 ? 'Priorities' : `${selectedPriorities.length} selected`}
-              </span>
-              <svg className="w-4 h-4 ml-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            {showPriorityDropdown && (
-              <div className="absolute z-[100] mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-xl max-h-48 overflow-y-auto">
-                {[TaskPriority.LOW, TaskPriority.MEDIUM, TaskPriority.HIGH].map((priority) => (
-                  <label
-                    key={priority}
-                    className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer transition-colors duration-150"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedPriorities.includes(priority)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedPriorities([...selectedPriorities, priority]);
-                        } else {
-                          setSelectedPriorities(selectedPriorities.filter(p => p !== priority));
-                        }
-                      }}
-                      className="w-4 h-4 text-blue-600 bg-white dark:bg-gray-600 border-gray-300 dark:border-gray-500 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <span className="ml-2 text-sm text-gray-900 dark:text-gray-100 capitalize select-none">{priority}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Priority Filter - Reusable Multi-Select */}
+          <MultiSelect
+            options={[TaskPriority.LOW, TaskPriority.MEDIUM, TaskPriority.HIGH]}
+            selectedValues={selectedPriorities}
+            onChange={setSelectedPriorities}
+            placeholder="Priorities"
+            label="Filter by priorities"
+            className="w-full sm:w-36"
+          />
         </div>
 
         {/* Statistics Badges - Compact on right */}
