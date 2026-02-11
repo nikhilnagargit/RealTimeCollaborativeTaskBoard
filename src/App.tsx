@@ -1,19 +1,23 @@
-import React from 'react';
+import React, { Profiler } from 'react';
 import { TaskProvider } from './context/TaskContext';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ToastContainer } from './components/Toast';
 import { TaskBoard } from './components';
+import { trackingOnRenderCallback } from './utils/profiler';
 
 /**
  * App Content Component
  * Renders TaskBoard with ToastContainer
+ * Wrapped with React Profiler for performance monitoring
  */
 const AppContent: React.FC = () => {
   const { toasts, removeToast } = useToast();
   
   return (
     <>
-      <TaskBoard />
+      <Profiler id="TaskBoard" onRender={trackingOnRenderCallback}>
+        <TaskBoard />
+      </Profiler>
       <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );

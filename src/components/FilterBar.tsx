@@ -20,6 +20,10 @@ interface FilterBarProps {
   canRedo: boolean;
   getUndoDescription: () => string | null;
   getRedoDescription: () => string | null;
+  // Statistics
+  totalTasks?: number;
+  inProgressTasks?: number;
+  completedTasks?: number;
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({ 
@@ -32,6 +36,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   canRedo,
   getUndoDescription,
   getRedoDescription,
+  totalTasks = 0,
+  inProgressTasks = 0,
+  completedTasks = 0
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
@@ -97,7 +104,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   return (
     <div className="bg-white dark:bg-gray-800 border border-transparent dark:border-gray-600 rounded-lg shadow-md p-3 transition-colors duration-300">
       {/* Compact Single Row Layout */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 relative z-0">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 relative">
         {/* Left: Action Buttons (Compact) */}
         <div className="flex items-center gap-2 flex-shrink-0">
           {/* Create Task Button - Compact */}
@@ -203,7 +210,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             </button>
             
             {showAssigneeDropdown && (
-              <div className="absolute z-[99999] mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-xl max-h-48 overflow-y-auto">
+              <div className="absolute z-[100] mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-xl max-h-48 overflow-y-auto">
                 {assignees.map((assignee) => (
                   <label
                     key={assignee}
@@ -246,7 +253,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             </button>
             
             {showPriorityDropdown && (
-              <div className="absolute z-[99999] mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-xl max-h-48 overflow-y-auto">
+              <div className="absolute z-[100] mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-xl max-h-48 overflow-y-auto">
                 {[TaskPriority.LOW, TaskPriority.MEDIUM, TaskPriority.HIGH].map((priority) => (
                   <label
                     key={priority}
@@ -269,6 +276,50 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 ))}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Statistics Badges - Compact on right */}
+        <div className="flex items-center gap-2 ml-auto flex-shrink-0">
+          {/* Label to clarify these are total statistics */}
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400 mr-1">
+            Total:
+          </span>
+          
+          {/* Total Tasks */}
+          <div 
+            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-md cursor-help transition-all duration-200 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+            title="Total Tasks"
+            aria-label={`Total tasks: ${totalTasks}`}
+          >
+            <svg className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">{totalTasks}</span>
+          </div>
+
+          {/* In Progress */}
+          <div 
+            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-md cursor-help transition-all duration-200 hover:bg-yellow-100 dark:hover:bg-yellow-900/50"
+            title="In Progress Tasks"
+            aria-label={`In progress tasks: ${inProgressTasks}`}
+          >
+            <svg className="w-3.5 h-3.5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span className="text-sm font-semibold text-yellow-700 dark:text-yellow-300">{inProgressTasks}</span>
+          </div>
+
+          {/* Completed */}
+          <div 
+            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-md cursor-help transition-all duration-200 hover:bg-green-100 dark:hover:bg-green-900/50"
+            title="Completed Tasks"
+            aria-label={`Completed tasks: ${completedTasks}`}
+          >
+            <svg className="w-3.5 h-3.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-sm font-semibold text-green-700 dark:text-green-300">{completedTasks}</span>
           </div>
         </div>
       </div>

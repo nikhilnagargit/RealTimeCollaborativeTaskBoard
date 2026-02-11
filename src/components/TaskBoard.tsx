@@ -13,6 +13,7 @@ import { mockAssignees } from '../utils/mockData';
 import { useDarkMode } from '../hooks';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { TaskColumn } from './TaskColumn';
+import { VirtualizedTaskColumn } from './VirtualizedTaskColumn';
 import { FilterBar } from './FilterBar';
 import { TaskModal } from './TaskModal';
 import { ShortcutsHelp } from './ShortcutsHelp';
@@ -34,6 +35,7 @@ export const TaskBoard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isShortcutsHelpOpen, setIsShortcutsHelpOpen] = useState(false);
   const [isDark, toggleDarkMode] = useDarkMode();
+  const [isVirtualizationEnabled, setIsVirtualizationEnabled] = useState(false);
 
   /**
    * Filter and group tasks by status
@@ -179,7 +181,7 @@ export const TaskBoard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F5EFE7] to-[#E8DED0] dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       {/* Thomson Reuters Navbar - Sticky */}
-      <nav className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
+      <nav className="sticky top-0 z-[150] bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           {/* Thomson Reuters Logo */}
           <ThomsonReutersLogo size="md" />
@@ -216,6 +218,23 @@ export const TaskBoard: React.FC = () => {
                 )}
               </button>
 
+              {/* Virtualization Toggle */}
+              <button
+                onClick={() => setIsVirtualizationEnabled(!isVirtualizationEnabled)}
+                className={`px-4 py-3 font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 ${
+                  isVirtualizationEnabled
+                    ? 'bg-blue-500 text-white hover:bg-blue-600'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+                aria-label={isVirtualizationEnabled ? 'Disable virtualization' : 'Enable virtualization'}
+                title={isVirtualizationEnabled ? 'Disable Virtualization' : 'Enable Virtualization'}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span className="text-sm">Virtualize</span>
+              </button>
+
               {/* Profile Icon */}
               <div className="ml-2 flex items-center">
                 <button
@@ -232,21 +251,39 @@ export const TaskBoard: React.FC = () => {
           </div>
         </nav>
 
-        {/* Dark Green Hero Section */}
-        <div className="relative z-[100] bg-[#0D4D3E] dark:bg-[#0a2f26] py-12 border-b border-transparent dark:border-gray-700">
+        {/* Dark Green Hero Section - Thomson Reuters Style */}
+        <div className="relative z-[100] bg-[#1B3B36] dark:bg-[#0f2622] pt-12 pb-6 border-b border-transparent dark:border-gray-700">
           <div className="max-w-7xl mx-auto px-6">
             {/* Page Header */}
             <header className="mb-8 animate-fade-in">
-              <h1 className="text-4xl font-bold text-white mb-2">
-                Task Board 
-                <span className="text-2xl text-[#FF6B35]"> by Nikhil Nagar</span>
+              {/* Small label */}
+              <p className="text-xs font-semibold tracking-wider text-white/80 uppercase mb-4 dark:text-white/70">
+                THOMSON REUTERS
+              </p>
+              
+              {/* Main heading - Large, bold, white */}
+              <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                Task Board: Real-Time Collaboration
               </h1>
-              <p className="text-gray-200">
+              
+              {/* Subtitle - Light gray */}
+              <p className="text-lg text-white/90 dark:text-white/80 max-w-3xl leading-relaxed">
                 Manage your tasks efficiently with drag-and-drop, experience real-time collaboration and optimistic UI
               </p>
+              
+              {/* Author credit */}
+              <p className="text-sm text-white/70 dark:text-white/60 mt-4">
+                by Nikhil Nagar
+              </p>
             </header>
+          </div>
+        </div>
 
-            {/* Filter Bar */}
+        {/* Beige Content Area */}
+        <div className="bg-[#F5EFE7] dark:bg-gray-900 min-h-screen">
+          <div className="max-w-7xl mx-auto px-6 pt-6 pb-6">
+            
+            {/* Filter Bar with inline statistics */}
             <FilterBar 
               assignees={availableAssignees} 
               onFilterChange={handleFilterChange}
@@ -257,110 +294,54 @@ export const TaskBoard: React.FC = () => {
               canRedo={canRedo}
               getUndoDescription={getUndoDescription}
               getRedoDescription={getRedoDescription}
+              totalTasks={tasks.length}
+              inProgressTasks={groupedTasks[TaskStatus.IN_PROGRESS].length}
+              completedTasks={groupedTasks[TaskStatus.DONE].length}
             />
-          </div>
-        </div>
 
-        {/* Beige Content Area */}
-        <div className="bg-[#F5EFE7] dark:bg-gray-900 min-h-screen">
-          <div className="max-w-7xl mx-auto px-6 py-6">
-
-        {/* Task Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 stagger-animation">
-          <div className="bg-white dark:bg-gray-800 border border-transparent dark:border-gray-700 rounded-lg shadow-md p-4 hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Total Tasks</p>
-                <p className="text-2xl font-bold text-gray-800 dark:text-white">{tasks.length}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 border border-transparent dark:border-gray-700 rounded-lg shadow-md p-4 hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">In Progress</p>
-                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                  {groupedTasks[TaskStatus.IN_PROGRESS].length}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-yellow-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 border border-transparent dark:border-gray-700 rounded-lg shadow-md p-4 hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Completed</p>
-                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                  {groupedTasks[TaskStatus.DONE].length}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Task Columns */}
-        <div className="flex flex-col lg:flex-row gap-6 overflow-x-auto pb-4">
-          <TaskColumn
-            status={TaskStatus.TODO}
-            tasks={groupedTasks[TaskStatus.TODO]}
-            onDrop={handleTaskDrop}
-          />
-          <TaskColumn
-            status={TaskStatus.IN_PROGRESS}
-            tasks={groupedTasks[TaskStatus.IN_PROGRESS]}
-            onDrop={handleTaskDrop}
-          />
-          <TaskColumn
-            status={TaskStatus.DONE}
-            tasks={groupedTasks[TaskStatus.DONE]}
-            onDrop={handleTaskDrop}
-          />
+            {/* Task Columns - Toggle between regular and virtualized columns */}
+            <div className="flex flex-col lg:flex-row gap-6 overflow-x-auto pb-4 mt-6">
+          {isVirtualizationEnabled ? (
+            <VirtualizedTaskColumn
+              status={TaskStatus.TODO}
+              tasks={groupedTasks[TaskStatus.TODO]}
+              onDrop={handleTaskDrop}
+            />
+          ) : (
+            <TaskColumn
+              status={TaskStatus.TODO}
+              tasks={groupedTasks[TaskStatus.TODO]}
+              onDrop={handleTaskDrop}
+            />
+          )}
+          
+          {isVirtualizationEnabled ? (
+            <VirtualizedTaskColumn
+              status={TaskStatus.IN_PROGRESS}
+              tasks={groupedTasks[TaskStatus.IN_PROGRESS]}
+              onDrop={handleTaskDrop}
+            />
+          ) : (
+            <TaskColumn
+              status={TaskStatus.IN_PROGRESS}
+              tasks={groupedTasks[TaskStatus.IN_PROGRESS]}
+              onDrop={handleTaskDrop}
+            />
+          )}
+          
+          {isVirtualizationEnabled ? (
+            <VirtualizedTaskColumn
+              status={TaskStatus.DONE}
+              tasks={groupedTasks[TaskStatus.DONE]}
+              onDrop={handleTaskDrop}
+            />
+          ) : (
+            <TaskColumn
+              status={TaskStatus.DONE}
+              tasks={groupedTasks[TaskStatus.DONE]}
+              onDrop={handleTaskDrop}
+            />
+          )}
         </div>
           </div>
         </div>

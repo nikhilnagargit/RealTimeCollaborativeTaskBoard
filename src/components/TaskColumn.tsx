@@ -130,8 +130,8 @@ export const TaskColumn: React.FC<TaskColumnProps> = ({ status, tasks, onDrop })
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`min-h-[500px] p-4 rounded-lg transition-colors duration-200 ${
-            isDragOver ? 'bg-blue-100 dark:bg-blue-800 border-2 border-dashed border-blue-400 dark:border-blue-500' : 'border border-gray-200 dark:border-gray-700'
+          className={`min-h-[500px] rounded-lg transition-colors duration-200 ${
+            isDragOver ? 'bg-blue-100 dark:bg-blue-800 border-2 border-dashed border-blue-400 dark:border-blue-500' : ''
           }`}
           role="region"
           aria-label={`${getStatusDisplayName(status)} tasks`}
