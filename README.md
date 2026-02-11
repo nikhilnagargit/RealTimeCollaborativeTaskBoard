@@ -47,16 +47,16 @@ A production-ready task management application built with **React 18** and **Typ
 
 ```bash
 # Install dependencies
-npm install
+yarn install
 
 # Start development server
-npm start
+yarn start
 
 # Build for production
-npm build
+yarn build
 
 # Run tests
-npm test
+yarn test
 ```
 
 The app will open at [http://localhost:3000](http://localhost:3000)
