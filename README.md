@@ -3,6 +3,8 @@
 A production-ready task management application built with **React 18** and **TypeScript**, featuring drag-and-drop, custom virtualization for handling 100,000+ tasks, undo/redo system, dark mode, and advanced filtering.
 
 **🌐 Live Demo:** [https://real-time-collaborative-task-board-rho.vercel.app/](https://real-time-collaborative-task-board-rho.vercel.app/)
+<img width="2706" height="1946" alt="image" src="https://github.com/user-attachments/assets/57c37329-36f5-468a-ba81-f893dcb96f3e" />
+
 
 **Built by Nikhil Nagar**
 
