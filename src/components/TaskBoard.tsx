@@ -38,6 +38,13 @@ export const TaskBoard: React.FC = () => {
   const [isVirtualizationEnabled, setIsVirtualizationEnabled] = useState(false);
 
   /**
+   * Group all tasks by status (unfiltered) for statistics
+   */
+  const allGroupedTasks = useMemo(() => {
+    return groupTasksByStatus(tasks);
+  }, [tasks]);
+
+  /**
    * Filter and group tasks by status
    * Uses useMemo for performance optimization
    */
@@ -251,39 +258,29 @@ export const TaskBoard: React.FC = () => {
           </div>
         </nav>
 
-        {/* Dark Green Hero Section - Thomson Reuters Style */}
-        <div className="relative z-[100] bg-[#1B3B36] dark:bg-[#0f2622] pt-12 pb-6 border-b border-transparent dark:border-gray-700">
+        {/* Dark Green Hero Section - Thomson Reuters Style - Compact */}
+        <div className="relative z-[100] bg-[#113022] dark:bg-[#0a1f16] pt-6 pb-4 border-b border-transparent dark:border-gray-700">
           <div className="max-w-7xl mx-auto px-6">
             {/* Page Header */}
-            <header className="mb-8 animate-fade-in">
-              {/* Small label */}
-              <p className="text-xs font-semibold tracking-wider text-white/80 uppercase mb-4 dark:text-white/70">
-                THOMSON REUTERS
-              </p>
-              
-              {/* Main heading - Large, bold, white */}
-              <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
-                Task Board: Real-Time Collaboration
+            <header className="mb-4 animate-fade-in">
+              {/* Main heading with author in Thomson Reuters orange */}
+              <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-2">
+                Task Board <span className="text-sm font-normal text-[#FF4F00]">by Nikhil Nagar</span>
               </h1>
               
-              {/* Subtitle - Light gray */}
-              <p className="text-lg text-white/90 dark:text-white/80 max-w-3xl leading-relaxed">
-                Manage your tasks efficiently with drag-and-drop, experience real-time collaboration and optimistic UI
-              </p>
-              
-              {/* Author credit */}
-              <p className="text-sm text-white/70 dark:text-white/60 mt-4">
-                by Nikhil Nagar
+              {/* App description */}
+              <p className="text-sm text-white/80 dark:text-white/70">
+                Manage tasks efficiently with drag-and-drop, real-time collaboration, and optimistic UI updates
               </p>
             </header>
           </div>
         </div>
 
         {/* Beige Content Area */}
-        <div className="bg-[#F5EFE7] dark:bg-gray-900 min-h-screen">
+        <div className="bg-[#FDF2DA] dark:bg-gray-900 min-h-screen">
           <div className="max-w-7xl mx-auto px-6 pt-6 pb-6">
             
-            {/* Filter Bar with inline statistics */}
+            {/* Filter Bar with inline statistics - Always show unfiltered counts */}
             <FilterBar 
               assignees={availableAssignees} 
               onFilterChange={handleFilterChange}
@@ -295,8 +292,9 @@ export const TaskBoard: React.FC = () => {
               getUndoDescription={getUndoDescription}
               getRedoDescription={getRedoDescription}
               totalTasks={tasks.length}
-              inProgressTasks={groupedTasks[TaskStatus.IN_PROGRESS].length}
-              completedTasks={groupedTasks[TaskStatus.DONE].length}
+              todoTasks={allGroupedTasks[TaskStatus.TODO].length}
+              inProgressTasks={allGroupedTasks[TaskStatus.IN_PROGRESS].length}
+              completedTasks={allGroupedTasks[TaskStatus.DONE].length}
             />
 
             {/* Task Columns - Toggle between regular and virtualized columns */}

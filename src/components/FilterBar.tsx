@@ -20,8 +20,9 @@ interface FilterBarProps {
   canRedo: boolean;
   getUndoDescription: () => string | null;
   getRedoDescription: () => string | null;
-  // Statistics
+  // Statistics (always unfiltered counts)
   totalTasks?: number;
+  todoTasks?: number;
   inProgressTasks?: number;
   completedTasks?: number;
 }
@@ -37,6 +38,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   getUndoDescription,
   getRedoDescription,
   totalTasks = 0,
+  todoTasks = 0,
   inProgressTasks = 0,
   completedTasks = 0
 }) => {
@@ -281,15 +283,15 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
         {/* Statistics Badges - Compact on right */}
         <div className="flex items-center gap-2 ml-auto flex-shrink-0">
-          {/* Label to clarify these are total statistics */}
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400 mr-1">
+          {/* Label to clarify these are total statistics (unfiltered) */}
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400 mr-1" title="These counts don't change with filters">
             Total:
           </span>
           
           {/* Total Tasks */}
           <div 
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-md cursor-help transition-all duration-200 hover:bg-blue-100 dark:hover:bg-blue-900/50"
-            title="Total Tasks"
+            title="Total Tasks (all statuses, unfiltered)"
             aria-label={`Total tasks: ${totalTasks}`}
           >
             <svg className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -298,10 +300,22 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">{totalTasks}</span>
           </div>
 
+          {/* TODO Tasks */}
+          <div 
+            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-md cursor-help transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            title="TODO: Total tasks in To Do status (unfiltered)"
+            aria-label={`TODO tasks: ${todoTasks}`}
+          >
+            <svg className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{todoTasks}</span>
+          </div>
+
           {/* In Progress */}
           <div 
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-md cursor-help transition-all duration-200 hover:bg-yellow-100 dark:hover:bg-yellow-900/50"
-            title="In Progress Tasks"
+            title="In Progress: Total tasks in progress (unfiltered)"
             aria-label={`In progress tasks: ${inProgressTasks}`}
           >
             <svg className="w-3.5 h-3.5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -313,7 +327,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           {/* Completed */}
           <div 
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-md cursor-help transition-all duration-200 hover:bg-green-100 dark:hover:bg-green-900/50"
-            title="Completed Tasks"
+            title="Done: Total completed tasks (unfiltered)"
             aria-label={`Completed tasks: ${completedTasks}`}
           >
             <svg className="w-3.5 h-3.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
