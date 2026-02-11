@@ -1,6 +1,7 @@
 # 🚀 Real-Time Collaborative Task Board
 
 A production-ready task management application built with **React 18** and **TypeScript**, featuring drag-and-drop, custom virtualization for handling 100,000+ tasks, undo/redo system, dark mode, and advanced filtering.
+<img width="2934" height="1618" alt="image" src="https://github.com/user-attachments/assets/c401f9cf-f34e-4cfe-abf0-5f53f43a7401" />
 
 **Built by Nikhil Nagar**
 
